@@ -12,7 +12,7 @@ import traci.constants as tc
 
 # can also use sumo-gui for GUI demo
 # Change the .cfg based on the model being used
-traci.start(["sumo-gui", "-c", "sumocfg/freeway.sumo.cfg", "--device.rerouting.probability", "1"])
+traci.start(["sumo-gui", "-c", "sumocfg/freeway.sumo.cfg"])
 
 platoonSize = 7
 numCars = 45
