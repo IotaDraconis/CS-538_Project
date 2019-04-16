@@ -11,7 +11,7 @@ import traci
 import traci.constants as tc
 
 # can also use sumo-gui for GUI demo
-traci.start(["sumo", "-c", "sumocfg/freeway-manual.sumo.cfg"])
+traci.start(["sumo-gui", "-c", "sumocfg/freeway-manual.sumo.cfg"])
 
 platoonSize = 7
 numCars = 200
@@ -19,16 +19,12 @@ numPlatoons = numCars//platoonSize
 src = None
 dest = None
 # Use dir() to get all methods
-edgeList_original = traci.edge.getIDList()
-edgeList = list()
+edgeList = traci.edge.getIDList()
+#edgeList = list()
 
-print(edgeList_original)
-
-for id in edgeList_original:
-    if id[:4] == "edge":
-        edgeList.append(id)
-
-print(edgeList)
+#for id in edgeList_original:
+#    if id[:4] == "edge":
+#        edgeList.append(id)
 
 #set routes
 for i in range(numPlatoons):
@@ -40,7 +36,10 @@ for i in range(numPlatoons):
 #add cars
 for i in range(platoonSize):
     for j in range(numPlatoons):
-        while(traci.vehicle.add("car" + str(j) + "_" + str(i), "route" + str(j), typeID="vtypeauto") == traci.RTYPE_ERR):
+        # "route" + str(j)
+        car_value = traci.vehicle.add("car" + str(j) + "_" + str(i), "platoon_route", typeID="vtypeauto")
+        # print(car_value)
+        while(car_value == tc.RTYPE_ERR):
             traci.simulationStep()
 
 #loop till done
