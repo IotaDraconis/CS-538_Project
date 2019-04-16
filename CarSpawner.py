@@ -12,10 +12,10 @@ import traci.constants as tc
 
 # can also use sumo-gui for GUI demo
 # Change the .cfg based on the model being used
-traci.start(["sumo", "-c", "sumocfg/freeway.sumo.cfg", "--device.rerouting.probability", "1"])
+traci.start(["sumo-gui", "-c", "sumocfg/freeway.sumo.cfg", "--device.rerouting.probability", "1"])
 
 platoonSize = 7
-numCars = 200
+numCars = 45
 numPlatoons = numCars//platoonSize
 src = None
 dest = None
@@ -29,18 +29,23 @@ for i in range(len(edgeList)):
 
 #set routes
 for i in range(numPlatoons):
-    while src == dest:
+    route_found = False
+    while(route_found == False):
         src = random.choice(edges)
         dest = random.choice(edges)
-    #route_returned = traci._simulation.SimulationDomain.findRoute(self=???, fromEdge=src, toEdge=dest)
-    #print(route_returned)
-    traci.route.add("route" + str(i), [src, dest])
+        if(src != dest):
+            route_returned = traci.simulation.findRoute(fromEdge=src, toEdge=dest)
+            # print(route_returned.edges)
+            if(route_returned.edges != []):
+                route_found = True
+                # print("Route was found for a platoon!!!")
+    traci.route.add("route" + str(i), route_returned.edges)
 
 #add cars
 for i in range(platoonSize):
     for j in range(numPlatoons):
         # "route" + str(j)
-        car_return = traci.vehicle.add("car" + str(j) + "_" + str(i), "platoon", typeID="vtypeauto")
+        car_return = traci.vehicle.add("car" + str(j) + "_" + str(i), "route" + str(j), typeID="vtypeauto")
         #traci.vehicle.changeTarget()
         # print(car_value)
         while(car_return == tc.RTYPE_ERR):
