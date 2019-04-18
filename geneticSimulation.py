@@ -1,6 +1,3 @@
-import os, sys
-import random
-
 import sys, os
 import random
 
@@ -13,7 +10,7 @@ else:
 import traci
 import traci.constants as tc
 
-import simpla
+from plexe import Plexe, ACC
 
 from deap import base
 from deap import creator
@@ -23,6 +20,8 @@ IND_SIZE=1
 
 def run_sumo_iteration(platoon_size):
     traci.start(["sumo", "-c", "sumocfg/freeway.sumo.cfg"])
+    plexe = Plexe()
+    traci.addStepListener(plexe)
     num_cars = 100
     num_platoons = num_cars // platoon_size
     src = None

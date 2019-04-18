@@ -11,8 +11,8 @@ import traci
 import traci.constants as tc
 
 for option in dir(traci):
-    print(option)
     for option2 in dir(option):
-        print(option2)
-        print(dir(option2))
-        print("\n")
+        for option3 in dir(option2):
+            for option4 in dir(option3):
+                print(option4)
+                print("\n")
