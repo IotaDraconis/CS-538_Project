@@ -11,7 +11,7 @@ import traci
 import traci.constants as tc
 
 from plexe import Plexe, ACC, CACC
-sys.path.append(os.path.abspath("/home/pcoen/Documents/plexe-pyapi/examples"))
+sys.path.append(os.path.abspath("/home/user/Documents/plexe-pyapi/examples"))
 from utils import add_platooning_vehicle
 
 #from deap import base
@@ -51,7 +51,7 @@ def run_sumo_iteration(speed, platoon_size, distance):
             
 
     for i in range(num_platoons):
-        route_returned = traci.simulation.findRoute(fromEdge="edge_0_0", toEdge="absorption_1")
+        route_returned = traci.simulation.findRoute(fromEdge="edge_0_0", toEdge="absorption_0")
         traci.route.add("route" + str(i), route_returned.edges)
         LEADER = "car0_" + str(i)
 
@@ -62,33 +62,34 @@ def run_sumo_iteration(speed, platoon_size, distance):
             total_cars += 1
             vid = "car" + str(j) + "_" + str(i)
             add_platooning_vehicle(plexe, vid, spawn_offset - j * (distance + LENGTH), 0, speed, distance, False, route="route" + str(i))
-            plexe.set_fixed_lane(vid, i % 4, safe=False)
+            plexe.set_fixed_lane(vid, 0, safe=False)
             traci.vehicle.setSpeedMode(vid, 0)
             if j == 0:
                 plexe.set_active_controller(vid, ACC)
                 # Disable the ability to change lanes due to cars being dumb and changing lanes to get off on an off-ramps
-                plexe.enable_auto_lane_changing(LEADER, True)
+                plexe.enable_auto_lane_changing(LEADER, False)
                 #print("Creating leader of platoon: ", vid)
             else:
                 plexe.set_active_controller(vid, CACC)
-                plexe.enable_auto_feed(vid, True, LEADER, vid)
+                plexe.enable_auto_feed(vid, True, leader_id=LEADER, front_id="car" + str(j-1) + "_" + str(i))
                 plexe.add_member(LEADER, vid, i)
                 #print("Adding member to platoon ", LEADER, " | ", vid)
             if total_cars > max_cars:
                 break
 
-    print(total_cars)
+    #print(total_cars)
 
-    first_itteration = True
+    #first_itteration = True
     #loop till done
     while traci.simulation.getMinExpectedNumber() > 0:
-        if first_itteration == True and gui_mode == True:
-             first_itteration == False
-             traci.gui.trackVehicle("View #0", "car0_0")
-             traci.gui.setZoom("View #0", 3000)
-
+        #if first_itteration == True and gui_mode == True:
+             #first_itteration == False
+             #traci.gui.trackVehicle("View #0", "car0_0")
+             #traci.gui.setZoom("View #0", 3000)
+        
         for id in traci.vehicle.getIDList():
             total_fuel_used += traci.vehicle.getFuelConsumption(id)
+
         #        getFuelConsumption
         #        getCO2Emission
         #        getCOEmission
@@ -114,7 +115,7 @@ def evaluate(individual):
 
 
 
-run_sumo_iteration(100, 25, 1);
+run_sumo_iteration(36, 25, 1);
 
 
 
