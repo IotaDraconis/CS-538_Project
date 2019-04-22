@@ -19,7 +19,7 @@ from utils import add_platooning_vehicle
 #from deap import tools
 
 LENGTH=4
-gui_mode = False
+gui_mode = True
 
 
 def remove(vehID, reason):
